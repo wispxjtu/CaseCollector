@@ -1,0 +1,42 @@
+extends layout
+block additionalHead
+  script(src='/javascripts/index.js')
+  script(src="http://cdn.bootcss.com/bootstrap-confirmation/1.0.5/bootstrap-confirmation.min.js")
+  link(rel='stylesheet', href='//cdn.bootcss.com/datatables/1.10.12/css/dataTables.bootstrap.min.css')
+  script(src="http://cdn.bootcss.com/datatables/1.10.12/js/jquery.dataTables.min.js")
+  script(src="http://cdn.bootcss.com/datatables/1.10.12/js/dataTables.bootstrap.min.js")
+block content
+  div.container(style='padding-left:0px; padding-right:0px;')
+    //div.page-header
+    //  h1 Case list
+    a#newCaseBtn.btn(role='button', href='/cases/new') New
+    select#querySelect.form-control-static
+      option(value="1") 查看一个月以内
+      option(value="3") 查看三个月以内
+      option(value="6") 查看半年以内
+      option(value="24") 查看两年以内
+      option(value="240") 不限
+    div.row
+      div.col-md-6
+        table#caseListTable.table.table-condensed
+          thead
+            tr
+              th.col-xs-2 姓名
+              th.col-xs-1 年龄
+              th.col-xs-1 性别
+              th.col-xs-2 放射科号
+              th.col-xs-1 病理
+              th.col-xs-1 一致
+              th.col-xs-1 评分
+              th.col-xs-1 操作
+              th.col-xs-2 注释
+              th 病理详细
+              th 病例号
+              th 卡号
+              th 放射诊断
+              th create_at
+          tbody
+
+
+
+

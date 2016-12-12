@@ -1,0 +1,18 @@
+//
+   Created by wisp on 2016/7/24.
+extends layout
+block additionalHead
+    script(src='/javascripts/casePage.js')
+    script(src='/javascripts/field_map.js')
+block content
+    div.container(style='padding-left:0px; padding-right:0px')
+        form(method="post")
+            div.form-group.col-sm-4
+                label.sr-only.control-label(for='usernameField') UserName
+                input#usernameField.form-control(type='text', name='username', placeholder='UserName')
+            div.form-group.col-sm-4
+                label.sr-only.control-label(for='passwordField') Password
+                input#passwordField.form-control(type='password', name='password', placeholder='Password')
+            div.form-group.col-sm-4
+                input.btn.btn-primary(type='submit', value='Log In')
+

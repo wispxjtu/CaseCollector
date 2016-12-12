@@ -1,0 +1,100 @@
+//
+   Created by wisp on 2016/7/9.
+   //
+extends layout
+block additionalHead
+    link(rel='stylesheet', href='/bootstrap-star-rating/css/star-rating.min.css')
+    link(rel='stylesheet', href='/bootstrap-star-rating/themes/krajee-svg/theme.min.css')
+    script(src='/javascripts/casePage.js')
+    script(src='/javascripts/field_map.js')
+    script(src="/bootstrap-star-rating/js/star-rating.min.js")
+    script(src="/bootstrap-star-rating/themes/krajee-svg/theme.min.js")
+    script(src="/bootstrap-star-rating/js/locales/zh.js")
+    script.
+        var caseInfo= !{JSON.stringify(caseInfo).replace(/<\//g, '<\\/')};
+        var mode = "#{mode}";
+block content
+    //h1= title
+    div.container(style='padding-left:0px; padding-right:0px')
+        form#caseForm
+            div#inputArea
+                label.sr-only.control-label(for='inputField') 住院号或就诊卡号
+                div.form-group.form-inline
+                    div.input-group.col-sm-4
+                        div.input-group-addon No.
+                        input#inputField.form-control(type='text' placeholder='住院号或就诊卡号')
+                    div.form-group
+                        button#resolveInfo.btn.btn-primary(type='button') Resolve
+                        button#editInfo.btn.btn-warning(type='button') Edit
+            div#baseArea
+                div.row
+                    div.form-group.col-sm-4.col-xs-6
+                        label.sr-only.control-label(for='nameField') Name
+                        input#nameField.form-control(type='text', placeholder='Name')
+                    div.form-group.col-sm-4.col-xs-3
+                        label.sr-only.control-label(for='ageField') Age
+                        input#ageField.form-control(type='text', placeholder='Age')
+                    div.form-group.col-sm-4.col-xs-3
+                        label.sr-only.control-label(for='genderField') Gender
+                        input#genderField.form-control(type='text', placeholder='Gender')
+                div.row
+                    div.form-group.col-sm-12
+                        label.sr-only.control-label(for='radDocField') 病理结果
+                        textarea#radDocField.form-control(placeholder='病理结果', rows='3')
+                div.row
+                    div.form-group.col-sm-4
+                        label.sr-only.control-label(for='radioNoField') 放射科号
+                        input#radioNoField.form-control(type='text', placeholder='放射科号')
+                div.row
+                    div.form-group.col-sm-12
+                        label.sr-only.control-label(for='radDiagnoseField') 影像诊断
+                        textarea#radDiagnoseField.form-control(placeholder='影像诊断', rows='3')
+                div.row
+                    div.form-group.col-sm-12
+                        label.sr-only.control-label(for='commentField') Comment
+                        textarea#commentField.form-control(placeholder='Comment', rows='3')
+                div.row
+                    div.form-group.col-sm-4
+                        input#ratingField(type="number")
+                    div.col-sm-4.form-group
+                        label(for='consistentField') 病理是否一致
+                        select#consistentField.form-control
+                            option(value=2) 未知
+                            option(value=1) 是
+                            option(value=0) 否
+
+            div#extendArea(style="display: none;")
+                div.row
+                    div.form-group.col-sm-4.col-xs-6
+                        label.sr-only.control-label(for='patientNoField') 住院号
+                        input#patientNoField.form-control(type='text', placeholder='住院号')
+                    div.form-group.col-sm-4.col-xs-6
+                        label.sr-only.control-label(for='cardNoField') 就诊卡号
+                        input#cardNoField.form-control(type='text', placeholder='就诊卡号')
+                div.row
+                    div.form-group.col-sm-4
+                        label.sr-only.control-label(for='departmentField') 科室名称
+                        input#departmentField.form-control(type='text', placeholder='科室名称')
+                    div.form-group.col-sm-4
+                        label.sr-only.control-label(for='districtField') 病区
+                        input#districtField.form-control(type='text', placeholder='病区')
+                    div.form-group.col-sm-4
+                        label.sr-only.control-label(for='roomNoField') 床位号码
+                        input#roomNoField.form-control(type='text', placeholder='床位号码')
+                div.row
+                    div.form-group.col-sm-4
+                        label.sr-only.control-label(for='enterDateField') 入院时间
+                        input#enterDateField.form-control(type='text', placeholder='入院时间')
+                    div.form-group.col-sm-4
+                        label.sr-only.control-label(for='exitDateField') 出院时间
+                        input#exitDateField.form-control(type='text', placeholder='出院时间')
+                    div.form-group.col-sm-4
+                        label.sr-only.control-label(for='currentStateField') 在院状态
+                        input#currentStateField.form-control(type='text', placeholder='在院状态')
+            div.form-group
+                button#moreInfoBtn.btn.btn-default.btn-primary(type='button') More
+            div.form-group.form-inline
+                button#createCaseBtn.btn.btn-default(type='button', onclick='return createCase()') Create
+                button#cancelCaseBtn.btn.btn-default(type='button') Cancel
+
+

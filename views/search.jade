@@ -1,0 +1,44 @@
+extends layout
+block additionalHead
+    script(src='/javascripts/searchPage.js')
+    link(rel='stylesheet', href='//cdn.bootcss.com/datatables/1.10.12/css/dataTables.bootstrap.min.css')
+    script(src="http://cdn.bootcss.com/datatables/1.10.12/js/jquery.dataTables.min.js")
+    script(src="http://cdn.bootcss.com/datatables/1.10.12/js/dataTables.bootstrap.min.js")
+block content
+    div.container(style='padding-left:0px; padding-right:0px;')
+        form#searchForm
+            each row in conditions
+                div.condition.row(id="#{row.propName}").col-xs-12.col-sm-7
+                    div.form-group.form-inline
+                        div.col-xs-3
+                            label.control-label #{row.displayName}
+                        div.col-xs-4(style='padding-left:0px; padding-right:0px;')
+                            select.second.form-control
+                                each option in row.options
+                                    option(value="#{option}") #{optionTranslate[option]}
+                        div.col-xs-5
+                            if row.resultOptions
+                                select.third.form-control
+                                    each option in row.resultOptions
+                                        option(value="#{option.value}") #{option.name}
+                            else
+                                input.third.form-control(type='#{row.type}', placeholder='#{row.displayName}')
+            div.form-group.col-xs-12
+                label.control-label 病理搜索, 注意,可能会很慢,人数越多越慢
+                input#keyword.form-control(type="text", placeholder="病理搜索")
+            div.form-group
+                button#prepareBtn.btn.btn-default.btn-primary(type='button') Prepare
+                button#searchBtn.btn.btn-default.btn-primary(type='button') Search
+
+        div#tableField.row(style="display: none;")
+            table#searchResultTable.table.table-condensed
+                thead
+                    tr
+                        th.col-xs-3 住院号
+                        th.col-xs-3 姓名
+                        th.col-xs-1 年龄
+                        th.col-xs-1 性别
+                        th.col-xs-2 病理
+                        th.col-xs-2 肉眼所见
+                        th.col-xs-2 入院日期
+                tbody
