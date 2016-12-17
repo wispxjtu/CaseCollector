@@ -5,11 +5,9 @@ let logger = require("../logger");
 
 let client = new elasticsearch.Client(config.elasticsearch);
 
-
-
 let helperIndexName = "helper";
 let mapping = {
-    caseCache : {
+    CaseCache : {
         properties : {
             patientNo : { type : "long" },
             cardNo: {type: "text"},
@@ -27,11 +25,10 @@ let mapping = {
             currentState: {type: "keyword"},
             medicalLink: {type: "text"},
             ipdLink: {type: "text"},
-            timeLineLink: {type: "text"},
+            timeLineLink: {type: "text"}/*,
             radLink: {type: "array"},
             radDocs: {type: "array"},
-            visualDocs: {type:"array"}
-
+            visualDocs: {type:"array"}*/
         }
     }
 };
@@ -43,12 +40,17 @@ function checkExist(type) {
             logger.info(`${helperIndexName} index do not exist, try to create it.`);
             client.indices.create({
                 index: helperIndexName,
-                mappings : mapping
-            })
+                body: {
+                    settings: {},
+                    mapping: mapping
+                }
+            });
         }
         else {
             // check mapping
         }
+    }).catch((err)=>{
+        console.error(err);
     });
 }
 
@@ -62,46 +64,53 @@ function getCollection(type){
             })
         },
         insert: function (data) {
-            client.index({
+            return client.index({
                 index: helperIndexName,
                 type: type,
                 id: data["id"] || null,
                 body: data
             });
-            getDb(url).then(function(db) {
-                // Insert some documents
-                data.create_at = new Date();
-                data.update_at = data.create_at;
-                db.collection(tableName).insertOne(data, function(err, result) {
-                    if (callback != null) callback(err, result);
-                });
-            }, function (err) {
-                callback(err);
-            });
         },
         find: function(query) {
-            var options, callback;
-            if (arguments.length == 2) {
-                options = {};
-                callback = arguments[1];
+            // let q, body;
+            let searchBody = {
+                index: helperIndexName,
+                type: type
+            };
+            if (!query){
+                // do nothing
             }
-            else if (arguments.length == 3) {
-                options = arguments[1];
-                callback = arguments[2];
+            else if (typeof query === "string") {
+                searchBody.q = query;
             }
-            var limit = options.limit?options.limit:0;
-            var skip = options.skip?options.skip:0;
-            getDb(url).then(function(db) {
-                //if (err != null) {if(callback != null) callback(err, null); return;}
-                // Find some documents
-                db.collection(tableName).find(query, options).limit(limit).skip(skip).toArray(function(err, docs) {
-                    logger.debug(`Found ${docs.length} records`);
-                    if (callback != null) callback(err, docs);
-                    //db.close();
+            else {
+                searchBody = query;
+                searchBody.index = helperIndexName;
+                searchBody.type = type;
+            }
+            if (searchBody.size == 0){
+                searchBody.scroll = "5m";
+                searchBody.size = 100;
+                let allHits = [];
+                return client.search(searchBody).then(function recur(response) {
+                    allHits = allHits.concat(response.hits.hits);
+                    logger.debug(`Scroll search, total:${response.hits.total}, this request get hits ${response.hits.hits.length}, already get ${allHits.length}`);
+                    if (response.hits.total > allHits.length){
+                        return client.scroll({
+                            scrollId: response._scroll_id,
+                            scroll: '30s'
+                        }).then(recur);
+                    }
+                    else {
+                        return allHits;
+                    }
                 });
-            }, function (err) {
-                callback(err);
-            });
+            }
+            else {
+                return client.search(searchBody).then((response) => {
+                    return response.hits.hits;
+                });
+            }
         },
         findOne: function(query, callback) {
             getDb(url).then(function(db) {
@@ -153,3 +162,19 @@ function getCollection(type){
         }
     };
 }
+
+getCollection('CaseCache').insert({
+    name: "Test",
+    age: 100,
+    patientNo: 93221233
+}).then(()=>{
+    return getCollection('CaseCache').find({q: "name:Test", size: 0})
+}).then((data)=>{
+    console.log(data)
+}).catch((err) => {
+    console.error(err);
+});
+
+
+
+module.exports.getCollection = getCollection;
